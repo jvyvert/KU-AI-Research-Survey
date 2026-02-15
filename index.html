@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>แบบสอบถามความรู้ AI พื้นฐาน - มหาวิทยาลัยเกษตรศาสตร์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* CSS พื้นฐานและ Mobile Responsive */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #f0f2f5; font-family: 'Kanit', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; overflow: hidden; transition: background-color 1s ease; }
+        
+        .card { 
+            background: white; padding: 25px; border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; 
+            width: 85%; max-width: 380px; position: relative; z-index: 1000; 
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        
+        .step { display: none; }
+        .step.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        h2 { color: #2c3e50; font-size: 18px; margin-bottom: 15px; line-height: 1.4; }
+        p { color: #7f8c8d; font-size: 13px; margin-bottom: 10px; }
+        
+        /* สไตล์ Input และ Form */
+        input[type="text"] { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 15px; outline: none; }
+        .gender-container { display: flex; justify-content: space-around; margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 10px; }
+        .gender-option { display: flex; align-items: center; cursor: pointer; font-size: 14px; }
+        .gender-option input { margin-right: 5px; }
+
+        .choice-btn { background-color: #fff; color: #333; border: 2px solid #007bff; margin-bottom: 10px; text-align: left; padding: 12px 15px; width: 100%; border-radius: 12px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .choice-btn:active { background-color: #007bff; color: white; }
+        
+        .main-btn { padding: 14px; font-size: 16px; border-radius: 50px; border: none; cursor: pointer; background-color: #007bff; color: white; width: 100%; font-weight: 600; }
+
+        /* ปุ่ม Yes/No แนวนอน ขนาดเท่ากัน */
+        .btn-container { margin-top: 25px; display: flex; justify-content: center; align-items: center; gap: 10px; min-height: 100px; position: relative; }
+        
+        #yesBtn, #noBtn { 
+            min-width: 100px; height: 50px; border-radius: 50px; border: none; 
+            font-size: 14px; font-weight: 600; cursor: pointer; 
+            display: flex; justify-content: center; align-items: center;
+            padding: 5px 10px;
+        }
+        #yesBtn { background-color: #ff4d6d; color: white; z-index: 1002; }
+        #noBtn { background-color: #adb5bd; color: white; z-index: 1001; position: relative; white-space: nowrap; }
+
+        #memoryGallery { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 10; }
+
+        /* Polaroid Style 30vw */
+        .polaroid {
+            background: white; padding: 6px 6px 25px 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: absolute; top: 50%; left: 50%; width: 30vw; max-width: 120px; 
+            pointer-events: auto; opacity: 0; display: flex; flex-direction: column;
+        }
+        .polaroid img { width: 100%; height: auto; object-fit: contain; border: 1px solid #eee; }
+        .polaroid-caption { font-family: 'Caveat', cursive; font-size: 12px; color: #444; text-align: center; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="mainCard">
+        <div id="step1" class="step active">
+            <h2>📝 ส่วนที่ 1: ข้อมูลเบื้องต้น</h2>
+            <p>แบบสอบถามงานวิจัย AI ประจำปี 2026<br>มหาวิทยาลัยเกษตรศาสตร์</p>
+            <input type="text" placeholder="ชื่อจริง - นามสกุล">
+            <input type="text" placeholder="ชื่อเล่น">
+            <input type="text" placeholder="อายุ">
+            <div class="gender-container">
+                <label class="gender-option"><input type="radio" name="gender"> ชาย</label>
+                <label class="gender-option"><input type="radio" name="gender"> หญิง</label>
+            </div>
+            <button class="main-btn" onclick="goStep(2)">เริ่มทำแบบสอบถาม</button>
+        </div>
+
+        <div id="step2" class="step"><p>1 / 11</p><h2>AI ย่อมาจากคำว่าอะไร?</h2><button class="choice-btn" onclick="goStep(3)">Artificial Intelligence</button><button class="choice-btn" onclick="goStep(3)">Apple Intelligence</button></div>
+        <div id="step3" class="step"><p>2 / 11</p><h2>Siri เป็น AI ใช่หรือไม่?</h2><button class="choice-btn" onclick="goStep(4)">ใช่ เป็นผู้ช่วยอัจฉริยะ</button><button class="choice-btn" onclick="goStep(4)">ไม่ใช่ เป็นแค่คนรับสาย</button></div>
+        <div id="step4" class="step"><p>3 / 11</p><h2>AI ช่วยแปลภาษาได้ไหม?</h2><button class="choice-btn" onclick="goStep(5)">ได้ สบายมาก</button><button class="choice-btn" onclick="goStep(5)">ไม่ได้เลย</button></div>
+        <div id="step5" class="step"><p>4 / 11</p><h2>Face ID ใช้ AI หรือเปล่า?</h2><button class="choice-btn" onclick="goStep(6)">ใช้จดจำใบหน้า</button><button class="choice-btn" onclick="goStep(6)">ใช้ระบบความร้อน</button></div>
+        <div id="step6" class="step"><p>5 / 11</p><h2>ChatGPT เก่งด้านไหนที่สุด?</h2><button class="choice-btn" onclick="goStep(7)">ตอบโต้ด้วยภาษา</button><button class="choice-btn" onclick="goStep(7)">ซ่อมคอมพิวเตอร์</button></div>
+        <div id="step7" class="step"><p>6 / 11</p><h2>YouTube แนะนำวิดีโอที่เราชอบใช้ AI ไหม?</h2><button class="choice-btn" onclick="goStep(8)">ใช้ ระบบแนะนำ</button><button class="choice-btn" onclick="goStep(8)">ไม่ใช้ ใช้ดวง</button></div>
+        <div id="step8" class="step"><p>7 / 11</p><h2>AI มีหัวใจรักใครได้หรือยัง?</h2><button class="choice-btn" onclick="goStep(9)">ยังทำไม่ได้</button><button class="choice-btn" onclick="goStep(9)">ทำได้นานแล้ว</button></div>
+        <div id="step9" class="step"><p>8 / 11</p><h2>รถยนต์ไร้คนขับใช้ AI ไหม?</h2><button class="choice-btn" onclick="goStep(10)">ใช้ นำทางและระวังทาง</button><button class="choice-btn" onclick="goStep(10)">ไม่ใช้ ใช้คนขับทางไกล</button></div>
+        <div id="step10" class="step"><p>9 / 11</p><h2>AI ช่วยหมอตรวจมะเร็งได้ไหม?</h2><button class="choice-btn" onclick="goStep(11)">ช่วยได้ แม่นยำมาก</button><button class="choice-btn" onclick="goStep(11)">ช่วยไม่ได้เลย</button></div>
+        <div id="step11" class="step"><p>10 / 11</p><h2>Machine Learning คืออะไร?</h2><button class="choice-btn" onclick="goStep(12)">การเรียนรู้ของเครื่อง</button><button class="choice-btn" onclick="goStep(12)">การบรรทุกเครื่องจักร</button></div>
+        <div id="step12" class="step"><p>11 / 11</p><h2>AI จะช่วยให้ชีวิตเราสะดวกขึ้นไหม?</h2><button class="choice-btn" onclick="goStep(13)">ช่วยได้มาก</button><button class="choice-btn" onclick="goStep(13)">ไม่มีผลเลย</button></div>
+
+        <div id="step13" class="step">
+            <h2>✅ ส่งแบบสอบถามเรียบร้อย</h2>
+            <p>กรุณากดรับรางวัลพิเศษจากงานวิจัย</p>
+            <button class="main-btn" onclick="goStep(14)" style="background-color: #ff4d6d;">เปิดดูของรางวัล</button>
+        </div>
+
+        <div id="step14" class="step">
+            <h2 id="finalText">เป็นแฟนกับเจนะครับ 🌹</h2>
+            <div id="btnGroup" class="btn-container">
+                <button id="yesBtn" onclick="accepted()">Yes</button>
+                <button id="noBtn" onclick="handleNoClick()" ontouchstart="handleNoMove()">No</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="memoryGallery">
+        <div class="polaroid"><img src="IMG_2831.png"><div class="polaroid-caption">Memory</div></div>
+        <div class="polaroid"><img src="IMG_2832.png"><div class="polaroid-caption">Memory</div></div>
+        <div class="polaroid"><img src="IMG_2833.png"><div class="polaroid-caption">Memory</div></div>
+        <div class="polaroid"><img src="IMG_2834.png"><div class="polaroid-caption">Memory</div></div>
+        <div class="polaroid"><img src="IMG_2835.png"><div class="polaroid-caption">Memory</div></div>
+        <div class="polaroid"><img src="IMG_2836.png"><div class="polaroid-caption">Memory</div></div>
+        <div class="polaroid"><img src="IMG_2223.jpg"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2299.jpg"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2318.png"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2532.jpg"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2538.jpg"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2553.jpg"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2570.jpg"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2581.jpg"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2598.jpg"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2599.jpg"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2821.jpg"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2827.jpg"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2839.jpg"><div class="polaroid-caption">Our Day</div></div>
+        <div class="polaroid"><img src="IMG_2842.jpg"><div class="polaroid-caption">Love You ❤️</div></div>
+    </div>
+
+    <script>
+        let noCount = 0;
+
+        function goStep(num) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById('step' + num);
+            if(target) target.classList.add('active');
+            if(num >= 14) document.body.style.backgroundColor = "#fff0f3";
+        }
+
+        // ระบบตื้อ 3 รอบตามที่ Jay ต้องการ
+        function handleNoClick() {
+            const btn = document.getElementById('noBtn');
+            noCount++;
+            if (noCount === 1) {
+                btn.innerHTML = "ไม่เป็นจริงหรอ";
+            } else if (noCount === 2) {
+                btn.innerHTML = "นะนะ";
+            } else if (noCount === 3) {
+                btn.innerHTML = "แต่เค้ารักเธอ";
+            } else {
+                moveButton(); // ตั้งแต่รอบ 4 ค่อยวาร์ปหนี
+            }
+        }
+
+        function handleNoMove() {
+            if (noCount >= 3) moveButton();
+        }
+
+        function moveButton() {
+            const btn = document.getElementById('noBtn');
+            btn.style.position = 'fixed'; 
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 50);
+            btn.style.left = x + 'px'; btn.style.top = y + 'px';
+        }
+
+        function accepted() {
+            // ข้อความซึ้งๆ ถึงบิว
+            document.getElementById('finalText').innerHTML = "ขอบคุณที่เข้ามาในชีวิตเจนะ ขอบคุณที่เลือกเจคนนี้ จะทำให้เต็มที่ เจรักบิวนะคะ <3";
+            document.getElementById('btnGroup').style.display = 'none';
+            document.body.style.backgroundColor = "#ffb7c5";
+            
+            const card = document.getElementById('mainCard');
+            card.style.zIndex = "2000"; card.style.transform = "scale(0.9)";
+            card.style.boxShadow = "0 20px 50px rgba(0,0,0,0.3)";
+
+            const gallery = document.getElementById('memoryGallery');
+            gallery.style.display = 'block';
+            const photos = document.querySelectorAll('.polaroid');
+            const placed = [];
+
+            photos.forEach((photo, index) => {
+                let x, y, angle, overlap, attempts = 0;
+                const w = photo.offsetWidth || 110;
+                const h = photo.offsetHeight || 150;
+
+                do {
+                    overlap = false;
+                    x = (Math.random() * (window.innerWidth - w)) - (window.innerWidth/2) + (w/2);
+                    y = (Math.random() * (window.innerHeight - h)) - (window.innerHeight/2) + (h/2);
+                    angle = (Math.random() * 40) - 20;
+
+                    for (let p of placed) {
+                        if (Math.abs(x - p.x) < w * 0.75 && Math.abs(y - p.y) < h * 0.75) {
+                            overlap = true; break;
+                        }
+                    }
+                    attempts++;
+                } while (overlap && attempts < 50);
+
+                placed.push({x, y});
+                setTimeout(() => {
+                    photo.style.opacity = "1";
+                    photo.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${angle}deg)`;
+                    photo.style.zIndex = index + 1;
+                }, index * 120);
+            });
+        }
+    </script>
+</body>
+</html>
